@@ -85,7 +85,7 @@ function Model() {
 function CameraController() {
   const { camera, gl } = useThree();
   const keys = useRef({ w: false, a: false, s: false, d: false, shift: false });
-  const rotation = useRef({ x: 0, y: 0 });
+  const rotation = useRef({ x: -0.26, y: 0.174 });
   const baseSpeed = 3.25;
 
   useEffect(() => {
@@ -151,7 +151,7 @@ export default function Scene3D() {
     <>
       <LoaderOverlay />
       <div style={{ width: "100vw", height: "100vh", cursor: "none", background: "#000" }}>
-        <Canvas camera={{ position: [0, 0, 1.8], fov: 50 }}>
+        <Canvas camera={{ position: [38.27, 99.59, 178.21], fov: 50 }}>
           <ambientLight intensity={1} />
           <directionalLight position={[5, 5, 5]} intensity={1} />
           <Suspense fallback={null}>
