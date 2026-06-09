@@ -40,5 +40,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# Large 3D assets
-public/*.glb
+# Large 3D assets (uncompressed)
+public/girl_xi.glb
+public/zeze_3d_anime_girl.glb

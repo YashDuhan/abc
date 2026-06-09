@@ -12,7 +12,7 @@ function Background() {
 
 function Model() {
   const groupRef = useRef<THREE.Group>(null);
-  const { scene } = useGLTF("/girl_xi.glb");
+  const { scene } = useGLTF("/girl_xi_compressed.glb");
 
   useFrame((state) => {
     if (groupRef.current) {
