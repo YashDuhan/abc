@@ -1,9 +1,45 @@
 "use client";
 
-import { Suspense, useRef, useEffect } from "react";
+import { Suspense, useRef, useEffect, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { useGLTF, Environment } from "@react-three/drei";
+import { useGLTF, Environment, useProgress, Html } from "@react-three/drei";
 import * as THREE from "three";
+
+function Loader() {
+  const { progress } = useProgress();
+  return (
+    <Html center>
+      <div style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: "16px",
+      }}>
+        <div style={{
+          width: "200px",
+          height: "4px",
+          background: "#333",
+          borderRadius: "2px",
+          overflow: "hidden",
+        }}>
+          <div style={{
+            width: `${progress}%`,
+            height: "100%",
+            background: "#fff",
+            transition: "width 0.3s ease",
+          }} />
+        </div>
+        <p style={{
+          color: "#fff",
+          fontSize: "14px",
+          fontFamily: "system-ui, sans-serif",
+        }}>
+          Loading... {progress.toFixed(0)}%
+        </p>
+      </div>
+    </Html>
+  );
+}
 
 function Background() {
   const { scene } = useGLTF("/classroom.glb");
@@ -53,7 +89,7 @@ function CameraController() {
     const handleMouseMove = (e: MouseEvent) => {
       rotation.current.y -= e.movementX * 0.002;
       rotation.current.x -= e.movementY * 0.002;
-          };
+    };
     const handleClick = () => {
       gl.domElement.requestPointerLock();
     };
@@ -94,11 +130,11 @@ function CameraController() {
 
 export default function Scene3D() {
   return (
-    <div style={{ width: "100vw", height: "100vh", cursor: "none" }}>
+    <div style={{ width: "100vw", height: "100vh", cursor: "none", background: "#000" }}>
       <Canvas camera={{ position: [0, 0, 1.8], fov: 50 }}>
         <ambientLight intensity={1} />
         <directionalLight position={[5, 5, 5]} intensity={1} />
-        <Suspense fallback={null}>
+        <Suspense fallback={<Loader />}>
           <Background />
           <Model />
           <Environment preset="studio" />
