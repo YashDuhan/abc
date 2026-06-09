@@ -2,42 +2,60 @@
 
 import { Suspense, useRef, useEffect, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { useGLTF, Environment, useProgress, Html } from "@react-three/drei";
+import { useGLTF, Environment, useProgress } from "@react-three/drei";
 import * as THREE from "three";
 
-function Loader() {
-  const { progress } = useProgress();
+function LoaderOverlay() {
+  const { progress, active } = useProgress();
+  const [visible, setVisible] = useState(true);
+
+  useEffect(() => {
+    if (!active && progress === 100) {
+      const timer = setTimeout(() => setVisible(false), 500);
+      return () => clearTimeout(timer);
+    }
+  }, [active, progress]);
+
+  if (!visible) return null;
+
   return (
-    <Html center>
+    <div style={{
+      position: "fixed",
+      top: 0,
+      left: 0,
+      width: "100vw",
+      height: "100vh",
+      background: "#000",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      zIndex: 9999,
+      gap: "20px",
+    }}>
       <div style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        gap: "16px",
+        width: "250px",
+        height: "6px",
+        background: "#222",
+        borderRadius: "3px",
+        overflow: "hidden",
       }}>
         <div style={{
-          width: "200px",
-          height: "4px",
-          background: "#333",
-          borderRadius: "2px",
-          overflow: "hidden",
-        }}>
-          <div style={{
-            width: `${progress}%`,
-            height: "100%",
-            background: "#fff",
-            transition: "width 0.3s ease",
-          }} />
-        </div>
-        <p style={{
-          color: "#fff",
-          fontSize: "14px",
-          fontFamily: "system-ui, sans-serif",
-        }}>
-          Loading... {progress.toFixed(0)}%
-        </p>
+          width: `${progress}%`,
+          height: "100%",
+          background: "linear-gradient(90deg, #fbbf24, #f59e0b)",
+          transition: "width 0.3s ease",
+        }} />
       </div>
-    </Html>
+      <p style={{
+        color: "#fff",
+        fontSize: "16px",
+        fontFamily: "system-ui, sans-serif",
+        margin: 0,
+      }}>
+        Loading... {progress.toFixed(0)}%
+      </p>
+    </div>
   );
 }
 
@@ -130,17 +148,20 @@ function CameraController() {
 
 export default function Scene3D() {
   return (
-    <div style={{ width: "100vw", height: "100vh", cursor: "none", background: "#000" }}>
-      <Canvas camera={{ position: [0, 0, 1.8], fov: 50 }}>
-        <ambientLight intensity={1} />
-        <directionalLight position={[5, 5, 5]} intensity={1} />
-        <Suspense fallback={<Loader />}>
-          <Background />
-          <Model />
-          <Environment preset="studio" />
-        </Suspense>
-        <CameraController />
-      </Canvas>
-    </div>
+    <>
+      <LoaderOverlay />
+      <div style={{ width: "100vw", height: "100vh", cursor: "none", background: "#000" }}>
+        <Canvas camera={{ position: [0, 0, 1.8], fov: 50 }}>
+          <ambientLight intensity={1} />
+          <directionalLight position={[5, 5, 5]} intensity={1} />
+          <Suspense fallback={null}>
+            <Background />
+            <Model />
+            <Environment preset="studio" />
+          </Suspense>
+          <CameraController />
+        </Canvas>
+      </div>
+    </>
   );
 }
